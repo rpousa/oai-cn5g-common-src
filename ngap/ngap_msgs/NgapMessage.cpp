@@ -186,10 +186,20 @@ void NgapMessage::setMessageType(NgapMessageType messageType) {
           Ngap_SuccessfulOutcome__value_PR_PDUSessionResourceModifyResponse);
     } break;
     case NgapMessageType::PDU_SESSION_RESOURCE_MODIFY_INDICATION: {
-      // TODO:
+      messageTypeIE.setProcedureCode(
+          Ngap_ProcedureCode_id_PDUSessionResourceModifyIndication);
+      messageTypeIE.setCriticality(Ngap_Criticality_reject);
+      messageTypeIE.setTypeOfMessage(Ngap_NGAP_PDU_PR_initiatingMessage);
+      messageTypeIE.setValuePresent(
+          Ngap_InitiatingMessage__value_PR_PDUSessionResourceModifyIndication);
     } break;
     case NgapMessageType::PDU_SESSION_RESOURCE_MODIFY_CONFIRM: {
-      // TODO:
+      messageTypeIE.setProcedureCode(
+          Ngap_ProcedureCode_id_PDUSessionResourceModifyIndication);
+      messageTypeIE.setCriticality(Ngap_Criticality_reject);
+      messageTypeIE.setTypeOfMessage(Ngap_NGAP_PDU_PR_successfulOutcome);
+      messageTypeIE.setValuePresent(
+          Ngap_SuccessfulOutcome__value_PR_PDUSessionResourceModifyConfirm);
     } break;
     case NgapMessageType::PDU_SESSION_RESOURCE_RELEASE_COMMAND: {
       messageTypeIE.setProcedureCode(

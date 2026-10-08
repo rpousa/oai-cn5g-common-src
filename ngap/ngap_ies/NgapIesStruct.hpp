@@ -92,6 +92,19 @@ typedef struct {
   OCTET_STRING_t pduSessionResourceModifyUnsuccessfulTransfer;
 } PDUSessionResourceModifyResponseItem_t;
 
+// section 9.2.1.6 PDU Session Resource Modify Indication (3GPP TS 38.413): the
+// NG-RAN has moved the downlink N3 endpoint of this session by itself
+typedef struct {
+  uint8_t pduSessionId;
+  OCTET_STRING_t pduSessionResourceModifyIndicationTransfer;
+} PDUSessionResourceModifyIndicationItem_t;
+
+// section 9.2.1.7 PDU Session Resource Modify Confirm (3GPP TS 38.413)
+typedef struct {
+  uint8_t pduSessionId;
+  OCTET_STRING_t pduSessionResourceModifyConfirmTransfer;
+} PDUSessionResourceModifyConfirmItem_t;
+
 // section 9.2.1.3 PDU Session Resource Release Command (3GPP TS 38.413 V16.0.0
 // (2019-12))
 typedef struct {
