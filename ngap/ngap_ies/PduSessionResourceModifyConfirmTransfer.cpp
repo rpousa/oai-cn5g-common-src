@@ -62,6 +62,65 @@ void PduSessionResourceModifyConfirmTransfer::getQosFlowFailedToModifyList(
 
 //------------------------------------------------------------------------------
 int PduSessionResourceModifyConfirmTransfer::encode(uint8_t* buf, int bufSize) {
+  /* The setters populate the C++ members only.  They have to be transferred
+   * into m_Ie here: without this, aper_encode is handed a zeroed SEQUENCE
+   * whose two mandatory members are NULL, and it returns -1 -- this encode
+   * path could never have produced output.  Every member of
+   * Ngap_PDUSessionResourceModifyConfirmTransfer_t is a pointer, so each one
+   * is allocated before it is filled. */
+
+  // QoS Flow Modify Confirm List (Mandatory)
+  if (!m_Ie->qosFlowModifyConfirmList) {
+    m_Ie->qosFlowModifyConfirmList = (Ngap_QosFlowModifyConfirmList_t*) calloc(
+        1, sizeof(Ngap_QosFlowModifyConfirmList_t));
+    if (!m_Ie->qosFlowModifyConfirmList) {
+      oai::logger::logger_common::ngap().error(
+          "Allocation of QoS Flow Modify Confirm List IE failed");
+      return -1;
+    }
+  }
+  if (!m_QosFlowModifyConfirmList.encode(*m_Ie->qosFlowModifyConfirmList)) {
+    oai::logger::logger_common::ngap().error(
+        "Encode QoS Flow Modify Confirm List IE failed");
+    return -1;
+  }
+
+  // UL NG-U UP TNL Information (Mandatory)
+  if (!m_Ie->uLNGU_UP_TNLInformation) {
+    m_Ie->uLNGU_UP_TNLInformation =
+        (Ngap_UPTransportLayerInformation_t*) calloc(
+            1, sizeof(Ngap_UPTransportLayerInformation_t));
+    if (!m_Ie->uLNGU_UP_TNLInformation) {
+      oai::logger::logger_common::ngap().error(
+          "Allocation of UL NG-U UP TNL Information IE failed");
+      return -1;
+    }
+  }
+  if (!m_UlNgUUpTnlInformation.encode(*m_Ie->uLNGU_UP_TNLInformation)) {
+    oai::logger::logger_common::ngap().error(
+        "Encode UL NG-U UP TNL Information IE failed");
+    return -1;
+  }
+
+  // QoS Flow Failed to Modify List (Optional)
+  if (m_QosFlowFailedToModifyList.has_value()) {
+    if (!m_Ie->qosFlowFailedToModifyList) {
+      m_Ie->qosFlowFailedToModifyList = (Ngap_QosFlowListWithCause_t*) calloc(
+          1, sizeof(Ngap_QosFlowListWithCause_t));
+      if (!m_Ie->qosFlowFailedToModifyList) {
+        oai::logger::logger_common::ngap().error(
+            "Allocation of QoS Flow Failed to Modify List IE failed");
+        return -1;
+      }
+    }
+    if (!m_QosFlowFailedToModifyList.value().encode(
+            *m_Ie->qosFlowFailedToModifyList)) {
+      oai::logger::logger_common::ngap().error(
+          "Encode QoS Flow Failed to Modify List IE failed");
+      return -1;
+    }
+  }
+
   ngap_utils::print_asn_msg(
       &asn_DEF_Ngap_PDUSessionResourceModifyConfirmTransfer, m_Ie);
   asn_enc_rval_t er = aper_encode_to_buffer(
